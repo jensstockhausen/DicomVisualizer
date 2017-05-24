@@ -16,7 +16,8 @@ public class Main
     public static void main(String args[])
     {
         Options options = new Options();
-        options.addOption("i", true, "display current time");
+        options.addOption("i", true, "input DICOM file");
+        options.addOption("o", true, "output folder");
 
         CommandLineParser parser = new DefaultParser();
 
@@ -24,9 +25,9 @@ public class Main
         {
             CommandLine cmd = parser.parse( options, args);
 
-            if (cmd.hasOption("i"))
+            if ((cmd.hasOption("i")) && (cmd.hasOption("o")))
             {
-                MainApp.run(cmd.getOptionValue("i"));
+                MainApp.run(cmd.getOptionValue("i"), cmd.getOptionValue("o"));
             }
 
         }
