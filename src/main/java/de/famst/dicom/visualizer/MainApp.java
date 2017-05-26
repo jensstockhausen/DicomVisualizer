@@ -142,8 +142,8 @@ public class MainApp extends PApplet
             }
         });
 
-        save(picFileName);
-        exit();
+        //save(picFileName);
+        //exit();
     }
 
     private float getSatForEntry(DicomEntry e)
