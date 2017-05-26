@@ -221,12 +221,12 @@ public class DicomParser implements DicomInputHandler
 
         LOG.info("Total length [{}]", String.format("%6.3e", length));
 
-        /*
+
         entries.forEach(e ->
         {
             LOG.debug("[{}:{}:{}] \t level[{}] #[{}]", e.getLogPosition(), TagUtils.toString(e.getTag()), e.getVr(), e.getLevel(), e.getLogLength());
         });
-        */
+
 
     }
 

@@ -31,7 +31,7 @@ public class Main
         {
             CommandLine cmd = parser.parse( options, args);
 
-            if ((cmd.hasOption("i") && cmd.hasOption("o")))
+            if ((cmd.hasOption("i") && cmd.hasOption("o"))) && (cmd.hasOption("o")))
             {
                 String in = cmd.getOptionValue("i");
                 String out = cmd.getOptionValue("o");
