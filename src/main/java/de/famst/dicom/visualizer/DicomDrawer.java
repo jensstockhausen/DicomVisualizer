@@ -17,21 +17,21 @@ public class DicomDrawer
     DicomParser dicomParser;
 
     Graphics2D graph;
+
     int width;
     int height;
 
-    public DicomDrawer(DicomParser dicomParser)
+    public DicomDrawer(DicomParser dicomParser, Graphics2D graph, int width, int height)
     {
         this.dicomParser = dicomParser;
-
-        width = (int) (dicomParser.length / 1.0f);
-        height = 70;
+        this.graph = graph;
+        this.width = width;
+        this.height = height;
     }
 
-    public String drawToSVG()
+    public Graphics2D draw()
     {
-        graph = new SVGGraphics2D(width, height);
-
+        // background
         graph.setPaint(Color.black);
         graph.fill(new Rectangle2D.Float(0, 0, width, height));
 
@@ -40,8 +40,6 @@ public class DicomDrawer
 
         float dHeight = 70;
         float hLevel = 5;
-
-        float oHeight = 10;
 
         float scaleX = (width - 2 * borderX) / dicomParser.length;
         float y = borderY;
@@ -135,8 +133,7 @@ public class DicomDrawer
             }
         });
 
-        SVGGraphics2D svg = (SVGGraphics2D) graph;
-        return svg.getSVGDocument();
+        return graph;
     }
 
 
