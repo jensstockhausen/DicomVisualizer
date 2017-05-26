@@ -17,8 +17,6 @@ public class Main
 {
     private static Logger LOG = LoggerFactory.getLogger(Main.class);
 
-    private static MainApp app = null;
-
     public static void main(String args[])
     {
         Options options = new Options();
@@ -31,7 +29,7 @@ public class Main
         {
             CommandLine cmd = parser.parse( options, args);
 
-            if ((cmd.hasOption("i") && cmd.hasOption("o"))) && (cmd.hasOption("o")))
+            if ((cmd.hasOption("i") && cmd.hasOption("o")))
             {
                 String in = cmd.getOptionValue("i");
                 String out = cmd.getOptionValue("o");
@@ -49,8 +47,6 @@ public class Main
                 {
                     e.printStackTrace();
                 }
-
-                MainApp.run(in);
 
             }
 
