@@ -23,6 +23,7 @@ public class Main
 
         Options options = new Options();
         options.addOption("i", true, "input file");
+        options.addOption("p", true, "input path");
         options.addOption("o", true, "output file");
 
         CommandLineParser parser = new DefaultParser();
@@ -61,6 +62,38 @@ public class Main
                 }
 
             }
+            if ((cmd.hasOption("p") && cmd.hasOption("o")))
+            {
+                String in = cmd.getOptionValue("p");
+                String out = cmd.getOptionValue("o");
+
+                StudyDrawer studyDrawer = new StudyDrawer(in);
+
+                int w = (int) studyDrawer.maxLength;
+                int h = 70 * studyDrawer.files.size();
+
+                SVGGraphics2D graph = new SVGGraphics2D(w, h);
+
+                LOG.info("Draw");
+
+                graph = (SVGGraphics2D) studyDrawer.draw(graph);
+
+                try
+                {
+                    LOG.info("Save");
+
+                    String svgDocument = graph.getSVGDocument();
+                    FileUtils.writeStringToFile(new File(out), svgDocument, StandardCharsets.UTF_8);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+
+
+            }
+
         }
         catch (ParseException e)
         {

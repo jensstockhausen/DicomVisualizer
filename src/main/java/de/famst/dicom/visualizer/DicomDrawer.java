@@ -20,6 +20,7 @@ public class DicomDrawer
 
     int width;
     int height;
+    int vOffset;
 
     public DicomDrawer(DicomParser dicomParser, Graphics2D graph, int width, int height)
     {
@@ -27,13 +28,23 @@ public class DicomDrawer
         this.graph = graph;
         this.width = width;
         this.height = height;
+        this.vOffset = 0;
+    }
+
+    public DicomDrawer(DicomParser dicomParser, Graphics2D graph, int width, int height, int vOffset)
+    {
+        this.dicomParser = dicomParser;
+        this.graph = graph;
+        this.width = width;
+        this.height = height;
+        this.vOffset = vOffset;
     }
 
     public Graphics2D draw()
     {
         // background
         graph.setPaint(Color.black);
-        graph.fill(new Rectangle2D.Float(0, 0, width, height));
+        graph.fill(new Rectangle2D.Float(0, 0 + vOffset, width, height));
 
         float borderX = 10;
         float borderY = 5;
@@ -42,7 +53,7 @@ public class DicomDrawer
         float hLevel = 5;
 
         float scaleX = (width - 2 * borderX) / dicomParser.length;
-        float y = borderY;
+        float y = borderY + vOffset;
 
         boolean[] multiFrameMode = new boolean[1];
         multiFrameMode[0] = false;
@@ -59,7 +70,7 @@ public class DicomDrawer
             float sat = ColorMapper.elementToSat(e.getElement());
             float bri = 100.0f;
 
-            // pixel as black rectangle and P
+            // pixel data as black rectangle and P
             if ((e.getTag() == Tag.PixelData) ||
                 ((e.getTag() == Tag.Item) && multiFrameMode[0]))
             {
@@ -104,7 +115,6 @@ public class DicomDrawer
             }
 
             // start of SQ as triangle
-
             if (e.getVr() == VR.SQ)
             {
                 Path2D.Double tri = new Path2D.Double();
@@ -117,7 +127,7 @@ public class DicomDrawer
                 graph.fill(tri);
             }
 
-            // marc private tags
+            // mark private tags
             if (e.isPrivateTag())
             {
                 hue = ColorMapper.groupToHue(e.getGroup());

@@ -25,6 +25,10 @@ public class DicomParser implements DicomInputHandler
 
     public String fileName;
 
+    public String stuid;
+    public String seuid;
+    public String siuid;
+
     private int idx;
     public List<DicomEntry> entries = new ArrayList<>();
     public float length;
@@ -116,7 +120,24 @@ public class DicomParser implements DicomInputHandler
             attrs.setBytes(tag, vr, b);
         }
 
-
+        else if (tag == Tag.StudyInstanceUID)
+        {
+            StringBuilder value = new StringBuilder();
+            vr.prompt(b, dis.bigEndian(), attrs.getSpecificCharacterSet(), 120, value);
+            stuid = value.toString();
+        }
+        else if (tag == Tag.SeriesInstanceUID)
+        {
+            StringBuilder value = new StringBuilder();
+            vr.prompt(b, dis.bigEndian(), attrs.getSpecificCharacterSet(), 120, value);
+            seuid = value.toString();
+        }
+        else if (tag == Tag.SOPInstanceUID)
+        {
+            StringBuilder value = new StringBuilder();
+            vr.prompt(b, dis.bigEndian(), attrs.getSpecificCharacterSet(), 120, value);
+            siuid = value.toString();
+        }
     }
 
     @Override
