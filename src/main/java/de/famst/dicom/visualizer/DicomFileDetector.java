@@ -10,45 +10,46 @@ import java.nio.file.Path;
 
 public class DicomFileDetector
 {
-    private static Logger LOG = LoggerFactory.getLogger(DicomFileDetector.class);
+  private static Logger LOG = LoggerFactory.getLogger(DicomFileDetector.class);
 
-    public static boolean isDCMFile(Path filePath)
+  private static byte[] tag = new byte[]{'D', 'I', 'C', 'M'};
+
+  public static boolean isDCMFile(Path filePath)
+  {
+    try (FileInputStream inStream = new FileInputStream(filePath.toFile()))
     {
-        try (FileInputStream inStream = new FileInputStream(filePath.toFile()))
+      byte[] buffer = new byte[4];
+
+      if (128 != inStream.skip(128))
+      {
+        LOG.error("reading bytes");
+        return false;
+      }
+
+      if (4 != inStream.read(buffer))
+      {
+        LOG.error("reading bytes");
+        return false;
+      }
+
+      inStream.close();
+
+      for (int i = 0; i < 4; i++)
+      {
+        if (buffer[i] != tag[i])
         {
-            byte[] tag = new byte[]{'D', 'I', 'C', 'M'};
-            byte[] buffer = new byte[4];
-
-            if (128 != inStream.skip(128))
-            {
-                LOG.error("reading bytes");
-                return false;
-            }
-
-            if (4 != inStream.read(buffer))
-            {
-                LOG.error("reading bytes");
-                return false;
-            }
-
-            inStream.close();
-
-            for (int i = 0; i < 4; i++)
-            {
-                if (buffer[i] != tag[i])
-                {
-                    return false;
-                }
-            }
-
+          return false;
         }
-        catch (IOException e)
-        {
-            LOG.warn("error reading file [{}]", e);
-            return false;
-        }
+      }
 
-        return true;
     }
+    catch (IOException e)
+    {
+      LOG.warn("error reading file [{}]", e);
+      return false;
+    }
+
+    return true;
+  }
 
 }

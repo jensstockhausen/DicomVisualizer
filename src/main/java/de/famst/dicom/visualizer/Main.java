@@ -37,7 +37,7 @@ public class Main
                 String in = cmd.getOptionValue("i");
                 String out = cmd.getOptionValue("o");
 
-                DicomParser dicomParser = new DicomParser(in);
+                DicomParser dicomParser = DicomParser.parseFile(in);
 
                 int w = (int) dicomParser.length;
                 int h = 70;

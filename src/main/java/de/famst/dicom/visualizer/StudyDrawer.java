@@ -58,7 +58,7 @@ public class StudyDrawer
         // order by SeriesInstanceUID
         files.stream().forEach(p->{
 
-            DicomParser dicomParser = new DicomParser(p.toAbsolutePath().toString());
+            DicomParser dicomParser = DicomParser.parseFile(p.toAbsolutePath().toString());
 
             String seriesUID = dicomParser.seuid;
 

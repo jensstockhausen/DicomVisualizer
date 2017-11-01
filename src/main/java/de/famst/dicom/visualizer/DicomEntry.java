@@ -7,133 +7,136 @@ import org.dcm4che3.data.VR;
  */
 public class DicomEntry
 {
-    private int idx;
-    private int group;
-    private int element;
-    private float level;
-    private boolean isPrivateCreator;
-    private boolean isPrivateTag;
-    private VR vr;
-    private float logLength;
-    private int multiplicity;
-    private float logPosition;
-    private int tag;
+  private int idx;
+  private int group;
+  private int element;
+  private int tag;
 
-    public DicomEntry(int idx)
-    {
-        this.idx = idx;
-        group = -1;
-        element = -1;
-        level = -1;
-        isPrivateCreator = false;
-        isPrivateTag = false;
-        vr = null;
-        logLength = 0;
-        multiplicity = 0;
-    }
+  private float level;
 
-    public int getIdx()
-    {
-        return idx;
-    }
+  private boolean isPrivateCreator;
+  private boolean isPrivateTag;
+  private VR vr;
+  private int multiplicity;
 
-    public int getGroup()
-    {
-        return group;
-    }
+  private float logLength;
+  private float logPosition;
 
-    public void setGroup(int group)
-    {
-        this.group = group;
-    }
+  public DicomEntry(int idx)
+  {
+    this.idx = idx;
+    group = -1;
+    element = -1;
+    level = -1;
+    isPrivateCreator = false;
+    isPrivateTag = false;
+    vr = null;
+    logLength = 0;
+    multiplicity = 0;
+  }
 
-    public int getElement()
-    {
-        return element;
-    }
+  public int getIdx()
+  {
+    return idx;
+  }
 
-    public void setElement(int element)
-    {
-        this.element = element;
-    }
+  public int getGroup()
+  {
+    return group;
+  }
 
-    public float getLevel()
-    {
-        return level;
-    }
+  public void setGroup(int group)
+  {
+    this.group = group;
+  }
 
-    public void setLevel(float level)
-    {
-        this.level = level;
-    }
+  public int getElement()
+  {
+    return element;
+  }
 
-    public boolean isPrivateCreator()
-    {
-        return isPrivateCreator;
-    }
+  public void setElement(int element)
+  {
+    this.element = element;
+  }
 
-    public void setPrivateCreator(boolean privateCreator)
-    {
-        isPrivateCreator = privateCreator;
-    }
+  public float getLevel()
+  {
+    return level;
+  }
 
-    public boolean isPrivateTag()
-    {
-        return isPrivateTag;
-    }
+  public void setLevel(float level)
+  {
+    this.level = level;
+  }
 
-    public void setPrivateTag(boolean privateTag)
-    {
-        isPrivateTag = privateTag;
-    }
+  public boolean isPrivateCreator()
+  {
+    return isPrivateCreator;
+  }
 
-    public VR getVr()
-    {
-        return vr;
-    }
+  public void setPrivateCreator(boolean privateCreator)
+  {
+    isPrivateCreator = privateCreator;
+  }
 
-    public void setVr(VR vr)
-    {
-        this.vr = vr;
-    }
+  public boolean isPrivateTag()
+  {
+    return isPrivateTag;
+  }
 
-    public float getLogLength()
-    {
-        return logLength;
-    }
+  public void setPrivateTag(boolean privateTag)
+  {
+    isPrivateTag = privateTag;
+  }
 
-    public void setLogLength(float logLength)
-    {
-        this.logLength = logLength;
-    }
+  public VR getVr()
+  {
+    return vr;
+  }
 
-    public int getMultiplicity()
-    {
-        return multiplicity;
-    }
+  public void setVr(VR vr)
+  {
+    this.vr = vr;
+  }
 
-    public void setMultiplicity(int multiplicity)
-    {
-        this.multiplicity = multiplicity;
-    }
+  public float getLogLength()
+  {
+    return logLength;
+  }
 
-    public void setLogPosition(float logPosition)
-    {
-        this.logPosition = logPosition;
-    }
+  public void setLogLength(float logLength)
+  {
+    this.logLength = logLength;
+  }
 
-    public float getLogPosition()
-    {
-        return logPosition;
-    }
+  public int getMultiplicity()
+  {
+    return multiplicity;
+  }
 
-    public void setTag(int tag)
-    {
-        this.tag = tag;
-    }
+  public void setMultiplicity(int multiplicity)
+  {
+    this.multiplicity = multiplicity;
+  }
 
-    public int getTag()
-    {
-        return tag;
-    }
+  public void setLogPosition(float logPosition)
+  {
+    this.logPosition = logPosition;
+  }
+
+  public float getLogPosition()
+  {
+    return logPosition;
+  }
+
+  public void setTag(int tag)
+  {
+    this.tag = tag;
+  }
+
+  public int getTag()
+  {
+    return tag;
+  }
 }
