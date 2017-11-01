@@ -18,13 +18,12 @@ public class ColorMapper
 
   static public float groupToHue(int group)
   {
-    if (group < MIN_TAG)
+    if (group < 1)
     {
-      group = (int) MIN_TAG;
+      group = (int) 1;
     }
 
-    float hue = (360.0f - 0.0f) *
-      (float) ((log(group) - log(MIN_TAG)) / (log(MAX_TAG) - MIN_TAG)) + 0.0f;
+    float hue = 360.0f * (float) ((log(group)) / (log(MAX_TAG)));
 
     hue = hue + HUE_OFFSET;
     if (hue > 360.0f)

@@ -51,7 +51,7 @@ public class Main
 
                 try
                 {
-                    LOG.info("Save");
+                    LOG.info("Save to [{}]", out);
 
                     String svgDocument = graph.getSVGDocument();
                     FileUtils.writeStringToFile(new File(out), svgDocument, StandardCharsets.UTF_8);
@@ -80,7 +80,7 @@ public class Main
 
                 try
                 {
-                    LOG.info("Save");
+                    LOG.info("Save to [{}]", out);
 
                     String svgDocument = graph.getSVGDocument();
                     FileUtils.writeStringToFile(new File(out), svgDocument, StandardCharsets.UTF_8);
