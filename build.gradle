@@ -1,5 +1,5 @@
 group 'de.famst'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 buildscript {
     repositories {
@@ -11,7 +11,6 @@ buildscript {
 }
 
 apply plugin: 'org.junit.platform.gradle.plugin'
-
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -27,25 +26,6 @@ repositories {
         url "http://www.dcm4che.org/maven2"
     }
 }
-
-junitPlatform {
-    // platformVersion '1.0.1'
-    filters {
-        engines {
-            // include 'junit-jupiter', 'junit-vintage'
-            // exclude 'custom-engine'
-        }
-        tags {
-            // include 'fast'
-            exclude 'slow'
-        }
-        // includeClassNamePattern '.*Test'
-    }
-    // enableStandardTestTask true
-    // reportsDir file('build/test-results/junit-platform') // this is the default
-    // logManager 'org.apache.logging.log4j.jul.LogManager'
-}
-
 
 ext.deps = [
         jfreeVersion   : '3.2',
@@ -69,9 +49,6 @@ dependencies {
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: "$deps.slf4jVersion"
     compile group: 'ch.qos.logback', name: 'logback-classic', version: "$deps.logbackVersion"
-
-    //testCompile group: 'junit', name: 'junit', version: "$deps.junitVersion"
-    //testCompile group: 'org.junit', name: 'junit5-api', version: '5.0.0-ALPHA'
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: "$deps.junit5Version"
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: "$deps.junit5Version"
