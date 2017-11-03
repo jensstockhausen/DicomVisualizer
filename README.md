@@ -3,6 +3,10 @@
 Renders the content of a DICOM file into a representative svg image.
 Visualizes all tags contained in the DICOM not only the pixel data.
 
+## Download
+
+   ![Latest Release](releases/latest)    
+
 ## Build:
 
     gradle installDist
