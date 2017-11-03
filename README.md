@@ -20,4 +20,12 @@ Convert a study
 
 ## Examples:
 
+One DICOM file
+
 ![alt text](./examples/dcm_image.svg "One DICOM file")
+
+A DICOM study
+
+![alt text](./examples/dcm_study.svg "A DICOM study")
+
+
