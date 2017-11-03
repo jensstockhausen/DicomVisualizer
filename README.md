@@ -28,4 +28,8 @@ A DICOM study
 
 ![alt text](./examples/dcm_study.svg "A DICOM study")
 
+Glossary
+
+![alt text](./examples/glossary.svg "Glossary")
+
 
