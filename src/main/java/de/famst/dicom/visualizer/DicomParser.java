@@ -28,6 +28,7 @@ public class DicomParser implements DicomInputHandler
   public String stuid;
   public String seuid;
   public String siuid;
+  public String modality;
 
   private int idx;
   public List<DicomEntry> entries = new ArrayList<>();
@@ -146,6 +147,12 @@ public class DicomParser implements DicomInputHandler
       StringBuilder value = new StringBuilder();
       vr.prompt(b, dis.bigEndian(), attrs.getSpecificCharacterSet(), 120, value);
       siuid = value.toString();
+    }
+    else if(tag == Tag.Modality)
+    {
+      StringBuilder value = new StringBuilder();
+      vr.prompt(b, dis.bigEndian(), attrs.getSpecificCharacterSet(), 120, value);
+      modality = value.toString();
     }
   }
 

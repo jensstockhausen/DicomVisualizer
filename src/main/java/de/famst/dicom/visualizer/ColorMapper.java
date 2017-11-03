@@ -13,7 +13,7 @@ public class ColorMapper
   private static final float MAX_TAG = 0x7FE0f;
 
   private static final float HUE_OFFSET = 100.0f;
-  private static final float MIN_SAT = 50.0f;
+  private static final float MIN_SAT = 80.0f;
   private static final float MAX_SAT = 100.0f;
 
   static public float groupToHue(int group)

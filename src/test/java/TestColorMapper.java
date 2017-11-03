@@ -19,11 +19,11 @@ public class TestColorMapper
     return Stream.of(
       Arguments.of(+0, 100.0f),
       Arguments.of(-5, 100.0f),
-      Arguments.of(+30, 100.0f),
-      Arguments.of(+100, 91.96f),
-      Arguments.of(+1000, 67.46f),
-      Arguments.of(+10000, 42.96f),
-      Arguments.of(+530000, 0.71f)
+      Arguments.of(+30, 192.97f),
+      Arguments.of(+100, 225.89f),
+      Arguments.of(+1000, 288.83f),
+      Arguments.of(+10000, 351.78f),
+      Arguments.of(+530000, 100.32f)
     );
   }
 
@@ -38,13 +38,13 @@ public class TestColorMapper
   static private Stream<? extends Arguments> elementToSatValues()
   {
     return Stream.of(
-      Arguments.of(+0, 49.99f),
-      Arguments.of(-5, 49.99f),
-      Arguments.of(+30, 49.99f),
-      Arguments.of(+100, 50.00f),
-      Arguments.of(+1000, 50.09f),
-      Arguments.of(+10000, 50.95f),
-      Arguments.of(+530000, 100.59f)
+      Arguments.of(+0, 79.99f),
+      Arguments.of(-5, 79.99f),
+      Arguments.of(+30, 79.99f),
+      Arguments.of(+100, 80.00f),
+      Arguments.of(+1000, 80.04f),
+      Arguments.of(+10000, 80.38f),
+      Arguments.of(+530000, 100.23f)
     );
   }
 
