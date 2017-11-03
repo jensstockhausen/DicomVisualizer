@@ -5,7 +5,7 @@ Visualizes all tags contained in the DICOM not only the pixel data.
 
 ## Download
 
-   ![Latest Release](releases/latest)    
+   ![Latest Release](https://github.com/jensstockhausen/DicomVisualizer/releases/latest)    
 
 ## Build:
 
