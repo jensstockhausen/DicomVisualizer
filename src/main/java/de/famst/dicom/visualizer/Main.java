@@ -115,8 +115,8 @@ public class Main
     try
     {
       StudyDrawer studyDrawer = new StudyDrawer(inputPath);
-      int width = (int) studyDrawer.maxLength;
-      int height = BASE_HEIGHT * studyDrawer.files.size() + SERIES_SPACING * studyDrawer.series.size();
+      int width = (int) studyDrawer.getMaxLength();
+      int height = BASE_HEIGHT * studyDrawer.getFiles().size() + SERIES_SPACING * studyDrawer.getSeries().size();
 
       SVGGraphics2D graph = new SVGGraphics2D(width, height);
 

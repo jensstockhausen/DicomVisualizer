@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestColorMapper
 {
 
-  static private Stream<? extends Arguments> groupToHueValues()
+  static Stream<Arguments> groupToHueValues()
   {
     return Stream.of(
       Arguments.of(+0, 100.0f),
@@ -37,7 +37,7 @@ public class TestColorMapper
     assertThat((double) hue, is(closeTo(expectedHue, 1e-2)));
   }
 
-  static private Stream<? extends Arguments> elementToSatValues()
+  static Stream<Arguments> elementToSatValues()
   {
     return Stream.of(
       Arguments.of(+0, 79.99f),

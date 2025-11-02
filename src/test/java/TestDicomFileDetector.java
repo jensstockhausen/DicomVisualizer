@@ -11,9 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,10 +72,7 @@ public class TestDicomFileDetector
     Path textFile = tempDir.resolve("text.txt");
     byte[] content = new byte[200];
     // Fill with non-DICM content
-    for (int i = 0; i < content.length; i++)
-    {
-      content[i] = (byte) 'X';
-    }
+    Arrays.fill(content, (byte) 'X');
     Files.write(textFile, content);
 
     boolean result = DicomFileDetector.isDCMFile(textFile);
