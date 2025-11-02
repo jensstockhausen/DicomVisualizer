@@ -1,6 +1,4 @@
 import de.famst.dicom.visualizer.DicomParser;
-import org.dcm4che3.data.*;
-import org.dcm4che3.io.DicomOutputStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -155,129 +153,11 @@ public class TestDicomParser
     @Test
     public void testValidDicomFile(@TempDir Path tempDir) throws Exception
     {
-        // create a valid DICOM file with all required tags
-        Attributes dcmAttrs = new Attributes();
-
-        // Patient Level - Required Tags
-        dcmAttrs.setString(Tag.PatientName, VR.PN, "Test^Patient");
-        dcmAttrs.setString(Tag.PatientID, VR.LO, "12345");
-        dcmAttrs.setString(Tag.PatientBirthDate, VR.DA, "19800101");
-        dcmAttrs.setString(Tag.PatientSex, VR.CS, "M");
-
-        // Study Level - Required Tags
-        dcmAttrs.setString(Tag.StudyInstanceUID, VR.UI, "1.2.840.113619.2.1.1.1");
-        dcmAttrs.setString(Tag.StudyDate, VR.DA, "20240101");
-        dcmAttrs.setString(Tag.StudyTime, VR.TM, "120000");
-        dcmAttrs.setString(Tag.StudyID, VR.SH, "STUDY001");
-        dcmAttrs.setString(Tag.AccessionNumber, VR.SH, "ACC001");
-        dcmAttrs.setString(Tag.ReferringPhysicianName, VR.PN, "");
-
-        // Series Level - Required Tags
-        dcmAttrs.setString(Tag.SeriesInstanceUID, VR.UI, "1.2.840.113619.2.1.1.2");
-        dcmAttrs.setString(Tag.SeriesNumber, VR.IS, "1");
-        dcmAttrs.setString(Tag.Modality, VR.CS, "CT");
-        dcmAttrs.setString(Tag.SeriesDate, VR.DA, "20240101");
-        dcmAttrs.setString(Tag.SeriesTime, VR.TM, "120000");
-
-        // Image Level - Required Tags
-        dcmAttrs.setString(Tag.SOPClassUID, VR.UI, UID.CTImageStorage);
-        dcmAttrs.setString(Tag.SOPInstanceUID, VR.UI, "1.2.840.113619.2.1.1.3");
-        dcmAttrs.setString(Tag.InstanceNumber, VR.IS, "1");
-        dcmAttrs.setString(Tag.ImageType, VR.CS, "ORIGINAL\\PRIMARY");
-
-        // Additional recommended tags
-        dcmAttrs.setString(Tag.Manufacturer, VR.LO, "Test Manufacturer");
-        dcmAttrs.setString(Tag.InstitutionName, VR.LO, "Test Institution");
-
-        // Private Tags - Private Creator Block
-        // Register private creator in group 0x0009
-        dcmAttrs.setString(0x00090010, VR.LO, "TEST_PRIVATE_CREATOR");
-        // Private tags in block (0009,1000-10FF)
-        dcmAttrs.setString(0x00091001, VR.LO, "Private Test Value 1");
-        dcmAttrs.setString(0x00091002, VR.SH, "PRIVATE_ID_123");
-        dcmAttrs.setInt(0x00091003, VR.IS, 42);
-
-        // Another private creator in group 0x0011
-        dcmAttrs.setString(0x00110010, VR.LO, "CUSTOM_VENDOR_DATA");
-        // Private tags in block (0011,1000-10FF)
-        dcmAttrs.setString(0x00111001, VR.LO, "Custom Vendor Information");
-        dcmAttrs.setString(0x00111002, VR.DA, "20240115");
-        dcmAttrs.setDouble(0x00111003, VR.DS, 3.14159);
-
-        // Structured Report - Content Sequence (findings)
-
-        // Finding 1: Measurement
-        Attributes finding1 = new Attributes();
-        finding1.setString(Tag.ValueType, VR.CS, "NUM");
-        finding1.setString(Tag.RelationshipType, VR.CS, "CONTAINS");
-
-        // Concept Name Code Sequence for Finding 1
-        Attributes conceptName1 = new Attributes();
-        conceptName1.setString(Tag.CodeValue, VR.SH, "121206");
-        conceptName1.setString(Tag.CodingSchemeDesignator, VR.SH, "DCM");
-        conceptName1.setString(Tag.CodeMeaning, VR.LO, "Distance");
-        finding1.newSequence(Tag.ConceptNameCodeSequence, 1).add(conceptName1);
-
-        // Measured Value Sequence
-        Attributes measuredValue1 = new Attributes();
-        measuredValue1.setString(Tag.NumericValue, VR.DS, "45.3");
-        Attributes measurementUnits1 = new Attributes();
-        measurementUnits1.setString(Tag.CodeValue, VR.SH, "mm");
-        measurementUnits1.setString(Tag.CodingSchemeDesignator, VR.SH, "UCUM");
-        measurementUnits1.setString(Tag.CodeMeaning, VR.LO, "millimeter");
-        measuredValue1.newSequence(Tag.MeasurementUnitsCodeSequence, 1).add(measurementUnits1);
-        finding1.newSequence(Tag.MeasuredValueSequence, 1).add(measuredValue1);
-
-        // Finding 2: Text observation
-        Attributes finding2 = new Attributes();
-        finding2.setString(Tag.ValueType, VR.CS, "TEXT");
-        finding2.setString(Tag.RelationshipType, VR.CS, "CONTAINS");
-        finding2.setString(Tag.TextValue, VR.UT, "No significant abnormalities detected");
-
-        Attributes conceptName2 = new Attributes();
-        conceptName2.setString(Tag.CodeValue, VR.SH, "121071");
-        conceptName2.setString(Tag.CodingSchemeDesignator, VR.SH, "DCM");
-        conceptName2.setString(Tag.CodeMeaning, VR.LO, "Finding");
-        finding2.newSequence(Tag.ConceptNameCodeSequence, 1).add(conceptName2);
-
-        // Finding 3: Code value (diagnosis)
-        Attributes finding3 = new Attributes();
-        finding3.setString(Tag.ValueType, VR.CS, "CODE");
-        finding3.setString(Tag.RelationshipType, VR.CS, "CONTAINS");
-
-        Attributes conceptName3 = new Attributes();
-        conceptName3.setString(Tag.CodeValue, VR.SH, "121069");
-        conceptName3.setString(Tag.CodingSchemeDesignator, VR.SH, "DCM");
-        conceptName3.setString(Tag.CodeMeaning, VR.LO, "Previous Finding");
-        finding3.newSequence(Tag.ConceptNameCodeSequence, 1).add(conceptName3);
-
-        Attributes conceptCode3 = new Attributes();
-        conceptCode3.setString(Tag.CodeValue, VR.SH, "R91.1");
-        conceptCode3.setString(Tag.CodingSchemeDesignator, VR.SH, "ICD10");
-        conceptCode3.setString(Tag.CodeMeaning, VR.LO, "Solitary pulmonary nodule");
-        finding3.newSequence(Tag.ConceptCodeSequence, 1).add(conceptCode3);
-
-        // Add all findings to Content Sequence
-        Sequence contentSequence = dcmAttrs.newSequence(Tag.ContentSequence, 3);
-        contentSequence.add(finding1);
-        contentSequence.add(finding2);
-        contentSequence.add(finding3);
-
-        Path validDicomPath = tempDir.resolve("valid.dcm");
-        File dicomFile = validDicomPath.toFile();
-
-        try (DicomOutputStream dos = new DicomOutputStream(dicomFile)) {
-            Attributes fmi = dcmAttrs.createFileMetaInformation(UID.ImplicitVRLittleEndian);
-            dos.writeDataset(fmi, dcmAttrs);
-        }
-
-        String validDicomFile = validDicomPath.toString();
-
-        DicomParser parser = DicomParser.parseFile(validDicomFile);
+        DicomParser parser = DicomTestUtils.createComprehensiveDicomFile(tempDir, "valid.dcm");
 
         assertNotNull(parser);
         assertNotNull(parser.getFileName());
-        assertThat(parser.getFileName(), equalTo(validDicomFile));
+        assertThat(parser.getFileName(), containsString("valid.dcm"));
         assertNotNull(parser.getEntries());
         assertThat(parser.getEntries().size(), greaterThan(0));
     }
