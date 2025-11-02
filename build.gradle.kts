@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    jacoco
 }
 
 group = "de.famst"
@@ -49,6 +50,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
 }
 
+
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -56,6 +58,30 @@ testing {
         }
     }
 }
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+}
+
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestCoverageVerification)
+}
+
 
 application {
     mainClass.set("de.famst.dicom.visualizer.Main")
