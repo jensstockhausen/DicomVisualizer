@@ -90,7 +90,7 @@ public class Main
     try
     {
       DicomParser dicomParser = DicomParser.parseFile(inputPath);
-      int width = (int) dicomParser.length;
+      int width = (int) dicomParser.getLength();
       int height = BASE_HEIGHT;
 
       SVGGraphics2D graph = new SVGGraphics2D(width, height);

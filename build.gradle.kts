@@ -28,7 +28,7 @@ val cliVersion = "1.4"
 val slf4jVersion = "1.7.25"
 val logbackVersion = "1.5.19"
 
-val junit5Version = "5.0.1"
+val junit5Version = "5.14.1"
 val hamcrestVersion = "1.3"
 
 dependencies {

@@ -2,7 +2,6 @@ package de.famst.dicom.visualizer;
 
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
-import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class DicomDrawer
     float dHeight = 70;
     float hLevel = 5;
 
-    float scaleX = (width - 1.5f * borderX) / dicomParser.length;
+    float scaleX = (width - 1.5f * borderX) / dicomParser.getLength();
     float y = borderY + vOffset;
 
     boolean[] multiFrameMode = new boolean[1];
@@ -74,7 +73,7 @@ public class DicomDrawer
 
     AffineTransform transform = graph.getTransform();
 
-    dicomParser.entries.forEach(e ->
+    dicomParser.getEntries().forEach(e ->
     {
       float x = borderX + (e.getLogPosition() * scaleX);
 
@@ -180,7 +179,7 @@ public class DicomDrawer
     graph.translate(borderX, vOffset + dHeight - 3.0f);
 
     graph.setColor(ColorMapper.HSBtoRGB(0.0f, 0.0f, 100.0f));
-    graph.drawString(dicomParser.modality + " - " + dicomParser.siuid, 0.0f, 0.0f);
+    graph.drawString(dicomParser.getModality() + " - " + dicomParser.getSiuid(), 0.0f, 0.0f);
 
     graph.setTransform(transform);
 

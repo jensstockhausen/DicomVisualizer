@@ -17,22 +17,22 @@ import java.util.Optional;
 import static java.lang.Math.log;
 
 /**
- * Created by jens on 13.05.17.
+ * Parsing a DICOM file and extracting meta-information and all entries
  */
 public class DicomParser implements DicomInputHandler
 {
-  private static Logger LOG = LoggerFactory.getLogger(DicomParser.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DicomParser.class);
 
-  public String fileName;
+  private String fileName;
+  private String stuid;
+  private String seuid;
+  private String siuid;
+  private String modality;
 
-  public String stuid;
-  public String seuid;
-  public String siuid;
-  public String modality;
+  private List<DicomEntry> entries = new ArrayList<>();
+  private float length;
 
   private int idx;
-  public List<DicomEntry> entries = new ArrayList<>();
-  public float length;
 
   private static final int DEFAULT_WIDTH = 130;
   private int width = DEFAULT_WIDTH;
@@ -49,23 +49,38 @@ public class DicomParser implements DicomInputHandler
   {
     this.fileName = fileName;
     idx = 0;
-    readContent(new File(fileName));
+
+    File file = new File(fileName);
+    if (!file.exists())
+    {
+      throw new IllegalArgumentException("File does not exist: " + fileName);
+    }
+    if (!file.isFile())
+    {
+      throw new IllegalArgumentException("Path is not a file: " + fileName);
+    }
+    if (!file.canRead())
+    {
+      throw new IllegalArgumentException("File is not readable: " + fileName);
+    }
+
+    readContent(file);
   }
 
   private void readContent(File file)
   {
     LOG.info("parsing DICOM file {}", file.getAbsolutePath());
 
-    try (DicomInputStream dis = new DicomInputStream(file);)
+    try (DicomInputStream dis = new DicomInputStream(file))
     {
       dis.setIncludeBulkData(DicomInputStream.IncludeBulkData.NO);
       dis.setDicomInputHandler(this);
       dis.readDataset(-1, -1);
-      dis.close();
     }
     catch (IOException e)
     {
-      LOG.error("reading DICOM file [{}]", e);
+      LOG.error("Error reading DICOM file [{}]", file.getAbsolutePath(), e);
+      throw new RuntimeException("Failed to read DICOM file: " + file.getAbsolutePath(), e);
     }
   }
 
@@ -79,18 +94,19 @@ public class DicomParser implements DicomInputHandler
     appendHeader(dis, line, entry);
 
     VR vr = dis.vr();
-    int vallen = dis.length();
-    boolean undeflen = vallen == -1;
+    int valueLength = dis.length();
+    boolean isValueLengthUndefined = valueLength == -1;
 
-    if (vr == VR.SQ || undeflen)
+    // sequence is intended
+    if (vr == VR.SQ || isValueLengthUndefined)
     {
       appendKeyword(dis, line, entry);
       LOG.debug("S:{}", line);
-      entries.add(entry);
+      getEntries().add(entry);
 
       dis.readValue(dis, attrs);
 
-      if (undeflen)
+      if (isValueLengthUndefined)
       {
         line.setLength(0);
         entry = new DicomEntry(idx++);
@@ -100,13 +116,15 @@ public class DicomParser implements DicomInputHandler
         appendKeyword(dis, line, entry);
 
         LOG.debug("I:{}", line);
-        entries.add(entry);
+        getEntries().add(entry);
       }
 
       return;
     }
+
     int tag = dis.tag();
     byte[] b = dis.readValue();
+
     line.append(" [");
     if (vr.prompt(b, dis.bigEndian(),
       attrs.getSpecificCharacterSet(),
@@ -117,7 +135,7 @@ public class DicomParser implements DicomInputHandler
     }
 
     LOG.debug("E:{}", line);
-    entries.add(entry);
+    getEntries().add(entry);
 
     if (tag == Tag.FileMetaInformationGroupLength)
     {
@@ -130,6 +148,7 @@ public class DicomParser implements DicomInputHandler
       attrs.setBytes(tag, vr, b);
     }
 
+    // extract UIDs and Modality from file
     else if (tag == Tag.StudyInstanceUID)
     {
       StringBuilder value = new StringBuilder();
@@ -154,6 +173,7 @@ public class DicomParser implements DicomInputHandler
       vr.prompt(b, dis.bigEndian(), attrs.getSpecificCharacterSet(), 120, value);
       modality = value.toString();
     }
+
   }
 
   @Override
@@ -168,7 +188,7 @@ public class DicomParser implements DicomInputHandler
     appendNumber(seq.size() + 1, line, entry);
 
     LOG.debug("SQ:{}", line);
-    entries.add(entry);
+    getEntries().add(entry);
 
     boolean undeflen = dis.length() == -1;
     dis.readValue(dis, seq);
@@ -182,7 +202,7 @@ public class DicomParser implements DicomInputHandler
       appendHeader(dis, line, entry);
       appendKeyword(dis, line, entry);
       LOG.debug("SQI:{}", line);
-      entries.add(entry);
+      getEntries().add(entry);
     }
   }
 
@@ -197,7 +217,7 @@ public class DicomParser implements DicomInputHandler
     appendFragment(line, dis, frags.vr(), entry);
 
     LOG.debug("F:{}", line);
-    entries.add(entry);
+    getEntries().add(entry);
   }
 
   @Override
@@ -210,7 +230,7 @@ public class DicomParser implements DicomInputHandler
   public void endDataset(DicomInputStream dis) throws IOException
   {
     // min length is 1.0f
-    entries.forEach(e ->
+    getEntries().forEach(e ->
     {
       if (e.getLogLength() < 1.0)
       {
@@ -218,8 +238,8 @@ public class DicomParser implements DicomInputHandler
       }
     });
 
-    Optional<DicomEntry> maxLengthEntry = entries.stream().max(Comparator.comparing(e -> e.getLogLength()));
-    Optional<DicomEntry> minLengthEntry = entries.stream().min(Comparator.comparing(e -> e.getLogLength()));
+    Optional<DicomEntry> maxLengthEntry = getEntries().stream().max(Comparator.comparing(e -> e.getLogLength()));
+    Optional<DicomEntry> minLengthEntry = getEntries().stream().min(Comparator.comparing(e -> e.getLogLength()));
 
     float minV = 1.0f;
     float maxV = 100.0f;
@@ -245,7 +265,7 @@ public class DicomParser implements DicomInputHandler
     float[] pos = new float[1];
     pos[0] = 0.0f;
 
-    entries.forEach(e ->
+    getEntries().forEach(e ->
     {
       double v = e.getLogLength();
       v = (maxT - minT) * (log(v) - log(finalMinV)) / (log(finalMaxV) - minT) + minT;
@@ -257,9 +277,9 @@ public class DicomParser implements DicomInputHandler
 
     length = pos[0];
 
-    LOG.info("Total length [{}]", String.format("%6.3e", length));
+    LOG.info("Total length [{}]", String.format("%6.3e", getLength()));
 
-    entries.forEach(e ->
+    getEntries().forEach(e ->
     {
       LOG.debug("[{}:{}:{}] \t level[{}] #[{}]", e.getLogPosition(), TagUtils.toString(e.getTag()), e.getVr(), e.getLevel(), e.getLogLength());
     });
@@ -339,4 +359,38 @@ public class DicomParser implements DicomInputHandler
     }
   }
 
+  public String getFileName()
+  {
+    return fileName;
+  }
+
+  public String getStuid()
+  {
+    return stuid;
+  }
+
+  public String getSeuid()
+  {
+    return seuid;
+  }
+
+  public String getSiuid()
+  {
+    return siuid;
+  }
+
+  public String getModality()
+  {
+    return modality;
+  }
+
+  public List<DicomEntry> getEntries()
+  {
+    return entries;
+  }
+
+  public float getLength()
+  {
+    return length;
+  }
 }

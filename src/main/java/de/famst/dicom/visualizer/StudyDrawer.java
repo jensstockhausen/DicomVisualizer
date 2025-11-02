@@ -2,7 +2,6 @@ package de.famst.dicom.visualizer;
 
 
 import org.dcm4che3.data.Attributes;
-import org.dcm4che3.data.Tag;
 import org.dcm4che3.io.DicomInputStream;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by jens on 26.05.17.
@@ -63,11 +61,11 @@ public class StudyDrawer
 
       DicomParser dicomParser = DicomParser.parseFile(p.toAbsolutePath().toString());
 
-      String seriesUID = dicomParser.seuid;
+      String seriesUID = dicomParser.getSeuid();
 
-      if (dicomParser.length > maxLength[0])
+      if (dicomParser.getLength() > maxLength[0])
       {
-        maxLength[0] = dicomParser.length;
+        maxLength[0] = dicomParser.getLength();
       }
 
       if (series.get(seriesUID) == null)
@@ -129,9 +127,9 @@ public class StudyDrawer
 
       for (DicomParser parser : series.get(seuid))
       {
-        LOG.info("Draw instance [{}]", parser.siuid);
+        LOG.info("Draw instance [{}]", parser.getSiuid());
 
-        int w = (int) parser.length;
+        int w = (int) parser.getLength();
         int h = 70;
 
         DicomDrawer dicomDrawer = new DicomDrawer(parser, graph, w, h, offset);
