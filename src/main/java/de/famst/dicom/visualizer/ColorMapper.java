@@ -5,9 +5,10 @@ import java.awt.*;
 import static java.lang.Math.log;
 
 /**
- * Created by jens on 25.05.17.
+ * Utility class for mapping DICOM tag components (group and element) to colors.
+ * Provides color generation based on DICOM tag structure for visualization purposes.
  */
-public class ColorMapper
+public final class ColorMapper
 {
   private static final float MIN_TAG = 0x0002f;
   private static final float MAX_TAG = 0x7FE0f;
@@ -16,72 +17,102 @@ public class ColorMapper
   private static final float MIN_SAT = 80.0f;
   private static final float MAX_SAT = 100.0f;
 
-  static public float groupToHue(int group)
+  private static final float MAX_HUE = 360.0f;
+  private static final float MAX_SAT_PERCENT = 100.0f;
+  private static final float MAX_BRIGHTNESS = 100.0f;
+  private static final float HUE_SECTIONS = 6.0f;
+  private static final int RGB_MAX = 255;
+
+  /**
+   * Private constructor to prevent instantiation of utility class.
+   */
+  private ColorMapper()
   {
-    if (group < 1)
+    throw new AssertionError("Utility class should not be instantiated");
+  }
+
+  /**
+   * Maps a DICOM group number to a hue value (0-360).
+   * Uses logarithmic scaling to distribute colors across the hue spectrum.
+   *
+   * @param group the DICOM group number
+   * @return the hue value in degrees (0-360)
+   */
+  public static float groupToHue(int group)
+  {
+    int normalizedGroup = Math.max(1, group);
+
+    float hue = MAX_HUE * (float) (log(normalizedGroup) / log(MAX_TAG));
+    hue += HUE_OFFSET;
+
+    if (hue > MAX_HUE)
     {
-      group = (int) 1;
+      hue -= MAX_HUE;
     }
 
-    float hue = 360.0f * (float) ((log(group)) / (log(MAX_TAG)));
-
-    hue = hue + HUE_OFFSET;
-    if (hue > 360.0f)
-    {
-      hue = hue - 360.0f;
-    }
     return hue;
   }
 
-  static public float elementToSat(int element)
+  /**
+   * Maps a DICOM element number to a saturation value (80-100).
+   * Uses linear mapping to vary saturation based on element number.
+   *
+   * @param element the DICOM element number
+   * @return the saturation value (80-100)
+   */
+  public static float elementToSat(int element)
   {
-    return map(element, (float) MIN_TAG, (float) MAX_TAG, MIN_SAT, MAX_SAT);
+    return map(element, MIN_TAG, MAX_TAG, MIN_SAT, MAX_SAT);
   }
 
-  static private float map(float value, float inMin, float inMax, float outMin, float outMax)
+  /**
+   * Maps a value from one range to another range linearly.
+   *
+   * @param value the value to map
+   * @param inMin the minimum of the input range
+   * @param inMax the maximum of the input range
+   * @param outMin the minimum of the output range
+   * @param outMax the maximum of the output range
+   * @return the mapped value in the output range
+   */
+  private static float map(float value, float inMin, float inMax, float outMin, float outMax)
   {
     return outMin + (outMax - outMin) * ((value - inMin) / (inMax - inMin));
   }
 
-  static public Color HSBtoRGB(float hue, float sat, float bri)
+  /**
+   * Converts HSB (Hue, Saturation, Brightness) color values to RGB Color object.
+   * This implementation uses a custom HSB to RGB conversion algorithm.
+   *
+   * @param hue the hue value (0-360 degrees)
+   * @param sat the saturation value (0-100 percent)
+   * @param bri the brightness value (0-100 percent)
+   * @return a Color object representing the RGB values
+   */
+  public static Color HSBtoRGB(float hue, float sat, float bri)
   {
-    float maxHue = 360.0f;
-    float maxSat = 100.0f;
-    float maxBri = 100.0f;
+    // Clamp values to valid ranges
+    hue = clamp(hue, 0.0f, MAX_HUE);
+    sat = clamp(sat, 0.0f, MAX_SAT_PERCENT);
+    bri = clamp(bri, 0.0f, MAX_BRIGHTNESS);
 
-    float calcR = 0.0f;
-    float calcG = 0.0f;
-    float calcB = 0.0f;
+    // Normalize to 0-1 range
+    hue /= MAX_HUE;
+    sat /= MAX_SAT_PERCENT;
+    bri /= MAX_BRIGHTNESS;
 
-    int calcRi;
-    int calcGi;
-    int calcBi;
+    float calcR;
+    float calcG;
+    float calcB;
 
-    if (hue > maxHue)
-      hue = maxHue;
-    if (sat > maxSat)
-      sat = maxSat;
-    if (bri > maxBri)
-      bri = maxBri;
-
-    if (hue < 0)
-      hue = 0;
-    if (sat < 0)
-      sat = 0;
-    if (bri < 0)
-      bri = 0;
-
-    hue /= maxHue; // h
-    sat /= maxSat; // s
-    bri /= maxBri; // b
-
-    if (sat == 0)
-    {  // saturation == 0
+    if (sat == 0.0f)
+    {
+      // Achromatic (gray)
       calcR = calcG = calcB = bri;
     }
     else
     {
-      float which = (hue - (int) hue) * 6.0f;
+      float which = (hue - (int) hue) * HUE_SECTIONS;
       float f = which - (int) which;
       float p = bri * (1.0f - sat);
       float q = bri * (1.0f - sat * f);
@@ -119,15 +150,32 @@ public class ColorMapper
           calcG = p;
           calcB = q;
           break;
+        default:
+          // Should never happen, but default to gray
+          calcR = calcG = calcB = bri;
+          break;
       }
     }
 
-    calcRi = (int) (255 * calcR);
-    calcGi = (int) (255 * calcG);
-    calcBi = (int) (255 * calcB);
+    int calcRi = (int) (RGB_MAX * calcR);
+    int calcGi = (int) (RGB_MAX * calcG);
+    int calcBi = (int) (RGB_MAX * calcB);
 
     return new Color(calcRi, calcGi, calcBi);
   }
 
-
+  /**
+   * Clamps a value between a minimum and maximum.
+   *
+   * @param value the value to clamp
+   * @param min the minimum value
+   * @param max the maximum value
+   * @return the clamped value
+   */
+  private static float clamp(float value, float min, float max)
+  {
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+  }
 }

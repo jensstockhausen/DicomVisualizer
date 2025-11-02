@@ -56,7 +56,7 @@ public class TestDicomParser
         Files.writeString(unreadableFile, "test content");
         File file = unreadableFile.toFile();
 
-        // Try to make file unreadable (this may not work on all systems)
+        // Try to make the file unreadable (this may not work on all systems)
         boolean madeUnreadable = file.setReadable(false);
 
         if (madeUnreadable && !file.canRead())
@@ -75,7 +75,7 @@ public class TestDicomParser
         }
         else
         {
-            // Skip test if we can't make file unreadable (e.g., on Windows or as root)
+            // Skip test if we can't make the file unreadable (e.g., on Windows or as root)
             System.out.println("Skipping unreadable file test - unable to remove read permissions");
         }
     }
