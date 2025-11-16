@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/jensstockhausen/DicomVisualizer/actions/workflows/gradle.yml/badge.svg)](https://github.com/jensstockhausen/DicomVisualizer/actions/workflows/gradle.yml)
+
 # DicomVisualizer
 
 Renders the content of a DICOM file into a representative svg image.
@@ -5,7 +7,7 @@ Visualizes all tags contained in the DICOM not only the pixel data.
 
 ## Download
 
-   ![Latest Release](https://github.com/jensstockhausen/DicomVisualizer/releases/latest)    
+   [Latest Release](https://github.com/jensstockhausen/DicomVisualizer/releases/latest)    
 
 ## Build:
 
