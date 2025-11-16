@@ -24,7 +24,7 @@ val jfreeVersion = "3.2"
 val dcm4cheVersion = "3.3.8"
 
 val ioVersion = "2.14.0"
-val cliVersion = "1.4"
+val cliVersion = "1.11.0"
 
 val slf4jVersion = "1.7.25"
 val logbackVersion = "1.5.19"
