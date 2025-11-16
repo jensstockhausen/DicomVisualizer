@@ -19,7 +19,7 @@ repositories {
     }
 }
 
-val jfreeVersion = "3.2"
+val jfreeVersion = "3.4.4"
 
 val dcm4cheVersion = "3.3.8"
 
