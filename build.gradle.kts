@@ -17,6 +17,10 @@ repositories {
     maven {
         url = uri("https://www.dcm4che.org/maven2")
     }
+    // repository for weasis
+    maven {
+        url = uri("https://raw.githubusercontent.com/nroduit/mvn-repo/refs/heads/master")
+    }
 }
 
 val jfreeVersion = "3.4.4"
