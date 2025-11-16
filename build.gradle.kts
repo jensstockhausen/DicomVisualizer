@@ -21,7 +21,7 @@ repositories {
 
 val jfreeVersion = "3.2"
 
-val dcm4cheVersion = "3.3.8"
+val dcm4cheVersion = "5.34.1"
 
 val ioVersion = "2.14.0"
 val cliVersion = "1.4"
