@@ -30,7 +30,7 @@ val dcm4cheVersion = "5.34.1"
 val ioVersion = "2.21.0"
 val cliVersion = "1.11.0"
 
-val slf4jVersion = "1.7.25"
+val slf4jVersion = "2.0.17"
 val logbackVersion = "1.5.21"
 
 val junit5Version = "6.0.1"
